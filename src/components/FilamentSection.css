@@ -1,0 +1,257 @@
+/*  FILAMENT SECTION  */
+
+.filament-section {
+  padding: 120px 80px;
+  position: relative;
+  overflow: hidden; 
+
+
+
+/*  FILAMENT HEADING  */
+
+.filament-heading {
+  text-align: center;
+  font-size: clamp(30px, 2.5vw, 48px);
+  font-weight: 400;
+  color: #313234;
+  margin-bottom: 60px;
+  letter-spacing: 0.3px;
+}
+
+/*  MATERIAL TAGS  */
+
+.material-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.tag {
+  border: 1px solid #000;
+  padding: 4px 10px;
+  font-size: 13px;
+  background: transparent;
+}
+
+.tag.small {
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+/* ================= MATERIAL GROUPS ================= */
+
+.material-groups {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-top: 25px;
+  font-size: 12px;
+  color: #777;
+}
+
+/* ================= MAIN FILAMENT LAYOUT ================= */
+
+.filament-wrapper {
+  position: relative;
+  margin-top: -120px;
+}
+
+/* ================= THREAD CANVAS ================= */
+/* THIS IS THE KEY FIX */
+
+.filament-thread-canvas {
+  position: absolute;
+
+  /* start OUTSIDE the screen on left */
+  left: -10vw;
+  right: -10vw;
+
+  top: 80%;
+  transform: translateY(-50%);
+
+  height: 260px;
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* make canvas fill container */
+.filament-thread-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ================= RIGHT COLOR PANEL ================= */
+
+.filament-colors {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin-left: auto;
+  padding-left: 1000px;
+
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* ================= COLOR SWATCH ================= */
+
+.filament-color {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.14),
+    inset 0 0 0 0.5px rgba(0,0,0,0.08);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.filament-color:hover {
+  transform: translateX(-3px) scale(1.15);
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.2),
+    inset 0 0 0 0.5px rgba(0,0,0,0.12);
+}
+
+/* ================= TOOLTIP ================= */
+
+.filament-color::after {
+  content: attr(data-name);
+  position: absolute;
+  right: 42px;
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+
+  background: rgb(65, 64, 64);
+  color: #fdfbfb;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.filament-color:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ================= COLOR DEFINITIONS ================= */
+
+.white { background: #ffffff; }
+.black { background: #000000; }
+
+.pearl {
+  background: linear-gradient(135deg, #ffffff, #f2f2f2, #e6e6e6);
+}
+
+.silver {
+  background: linear-gradient(135deg, #d9d9d9, #bfbfbf, #e6e6e6);
+}
+
+.green { background: #1fa84f; }
+.red { background: #e53935; }
+.magenta { background: #d81b60; }
+.yellow { background: #fbc02d; }
+.orange { background: #fb8c00; }
+.blue { background: #1e40af; }
+
+/* ================= TRANSPARENT ================= */
+
+.transparent {
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6), transparent 40%),
+    linear-gradient(
+      45deg,
+      rgba(0,0,0,0.06) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(0,0,0,0.06) 50%,
+      rgba(0,0,0,0.06) 75%,
+      transparent 75%
+    );
+  background-size: 10px 10px;
+
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.18),
+    inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* ================= LAYER CONTROL ================= */
+
+.material-tags,
+.material-groups,
+.filament-heading {
+  position: relative;
+  z-index: 2;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .filament-section {
+    background-attachment: scroll;
+    padding: 80px 24px;
+  }
+
+  .filament-thread-canvas {
+    top: 58%;
+    height: 180px;
+  }
+
+  .filament-colors {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-left: 0;
+    margin-top: 40px;
+  }
+}
+/* allow everything to overflow safely */
+.filament-section {
+  position: relative;
+  overflow: visible;
+}
+
+/* model canvas = full, free-floating layer */
+.filament-model-layer {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+
+  pointer-events: none; /* clicks go through */
+  z-index: 1;
+}
+
+/* ensure UI always stays above */
+.material-tags,
+.material-groups,
+.filament-heading,
+.filament-colors {
+  position: relative;
+  z-index: 3;
+}
+
+/* thread stays behind model */
+.filament-thread-canvas {
+  z-index: 0;
+}
+
+}

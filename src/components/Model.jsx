@@ -1,40 +1,48 @@
-import { useGLTF } from "@react-three/drei";
 import { useRef, useEffect } from "react";
+import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
-export default function Model({ onReady }) {
+export default function Model({
+  scale = 0.09,           // 
+  position = [0, -1, 0],  // 
+  autoRotate = true,
+  rotationSpeed = 0.003,
+  ...props
+}) {
   const group = useRef();
-  const { scene } = useGLTF("/zee.glb");
 
-  // slow idle rotation
+  const { scene, animations } = useGLTF("/holo.glb");
+  const { actions } = useAnimations(animations, group);
+
+  /* ---------- play animation if exists ---------- */
+  useEffect(() => {
+    if (!actions) return;
+
+    Object.values(actions).forEach((action) => action?.play());
+  }, [actions]);
+
+ 
   useFrame(() => {
-    if (group.current) {
-      group.current.rotation.y += 0.0039;
+    if (autoRotate && group.current) {
+      group.current.rotation.y += rotationSpeed;
     }
   });
 
-  // 🔥 SEND REFERENCES ONCE
+ 
   useEffect(() => {
-    if (!scene || !onReady) return;
+    if (!group.current) return;
 
-    const centerReel = scene.getObjectByName("CenterReel");
-    const cylinder = scene.getObjectByName("Cylinder"); // ⚠️ exact name
-    const cube = scene.getObjectByName("Cube");
-
-    onReady({ centerReel, cylinder, cube });
-  }, [scene, onReady]);
+    group.current.scale.setScalar(scale);
+    group.current.position.set(...position);
+  }, [scale, position]);
 
   return (
-    <primitive
-      ref={group}
-      object={scene}
-      scale={0.02}                // ✅ adjust model size
-      position={[0, -1.2, 0]}     // ✅ center vertically
-      rotation={[0, Math.PI, 0]}  // ✅ front of model faces camera
-    />
+    <group ref={group} {...props}>
+      <primitive object={scene} />
+    </group>
   );
 }
 
-useGLTF.preload("/zee.glb");
 
+useGLTF.preload("/holo.glb");
 

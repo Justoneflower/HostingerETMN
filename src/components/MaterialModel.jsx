@@ -1,51 +1,58 @@
 import { useGLTF } from "@react-three/drei";
 import { useRef, useEffect, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
-export default function MaterialModel() {
-  const group = useRef();
-  const { scene } = useGLTF("/new-model.glb"); // ← your new model here
-  const [color, setColor] = useState("#ffffff");
-  const [spinSpeed, setSpinSpeed] = useState(0.002);
+export default function MaterialModel(props) {
+  const groupRef = useRef();
+  const { nodes, materials } = useGLTF("/3d_benchy.glb");
 
-  // Floating animation + rotation
-  useFrame(() => {
-    if (group.current) {
-      group.current.rotation.y += spinSpeed;
-      group.current.position.y = Math.sin(Date.now() * 0.001) * 0.1;
-    }
-  });
-
-  // Listen for color change event
+ 
   useEffect(() => {
     const handler = (e) => {
-      setSpinSpeed(0.08); // spin fast
-      setColor(e.detail);
-      // stabilize after 1 second
-      setTimeout(() => setSpinSpeed(0.006), 2000);
+      const color = new THREE.Color(e.detail);
+
+      Object.values(materials).forEach((mat) => {
+        if (mat && mat.color) {
+          mat.color.set(color);
+        }
+      });
     };
+
     window.addEventListener("changeColor", handler);
     return () => window.removeEventListener("changeColor", handler);
-  }, []);
-
-  // Apply color to all meshes
-  useEffect(() => {
-    scene.traverse((child) => {
-      if (child.isMesh) {
-        child.material.color.set(color);
-      }
-    });
-  }, [color, scene]);
+  }, [materials]);
 
   return (
-    <primitive
-      ref={group}
-      object={scene}
-      scale={0.04}         // adjust as needed
-      position={[0, -1.2, 0]}
-      rotation={[0, Math.PI, 0]}
-    />
+    <group ref={groupRef} {...props} dispose={null}>
+
+      
+      <group rotation={[-Math.PI / 2, 0, 0]}>
+
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_2.geometry}
+          material={materials["Scene_-_Root"]}
+        />
+
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_3.geometry}
+          material={materials["Scene_-_Root"]}
+        />
+
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_4.geometry}
+          material={materials["Scene_-_Root"]}
+        />
+
+      </group>
+    </group>
   );
 }
 
-useGLTF.preload("/new-model.glb");
+
+useGLTF.preload("/3d_benchy.glb");
